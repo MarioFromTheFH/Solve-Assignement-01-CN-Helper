@@ -12,10 +12,14 @@ BITCNT=8
 def split_string(string, split_string):
     return [string[i:i+split_string] for i in range(0, len(string), split_string)]
 
-def doEncode(message, praeambel="10101011"):
+def doEncode(message, offset=8, praeambel="10101011"):
     if len(message)%BITCNT!=0 :
         print(str(len(message))+" %"+str(BITCNT)+" = "+str(len(message)%BITCNT))
         return 0
+
+    message=message[offset:]
+
+    print("The sequence "+praeambel+" appears in the input-string: "+str(message.count(praeambel))+" times")
 
     message=message.split(praeambel,1)[1]
     
