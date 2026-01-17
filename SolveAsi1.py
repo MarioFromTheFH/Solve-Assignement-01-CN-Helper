@@ -5,6 +5,13 @@ import sys
 
 BITCNT=8
 
+def find_period(message, pattern_rep=9):
+    for i in range(1, len(message) // 2):
+            pattern = message[:i]
+            if message[i:i*10] == pattern * pattern_rep:
+                return pattern
+    return None
+
 # Source - https://stackoverflow.com/a/36394050
 # Posted by Joe T. Boka
 # Retrieved 2026-01-14, License - CC BY-SA 3.0
@@ -12,27 +19,44 @@ BITCNT=8
 def split_string(string, split_string):
     return [string[i:i+split_string] for i in range(0, len(string), split_string)]
 
-def doEncode(message, offset=8*8, praeambel="10101011"):
+def do_decode(message, offset=8*8, sequence="10101011"):
 
     print("Removing the first %d characters" % offset)
 
-    str_prae = message[:offset]
-    message=message[offset:]
+    #str_prae = message[:offset]
+    message=message[offset:]    
 
-    print(str_prae+": "+str(len(str_prae))+" Zeichen")
-    print(message)
-
-    print("The sequence "+praeambel+" appears in the input-string: "+str(message.count(praeambel))+" times")
-
-    message=message.split(praeambel,1)[1]
-
-    print("Message after Präambel:")
-    print(message)
-    if len(message)%BITCNT!=0 :
-        print(str(len(message))+" %"+str(BITCNT)+" = "+str(len(message)%BITCNT))
-        return 0    
+    print("The sequence "+sequence+" appears in the input-string: "+str(message.count(sequence))+" times")
     
-    blocks = split_string(message,BITCNT)
+    pattern = find_period(message)
+
+    end_of_periodicity = 0
+
+    if not pattern:
+        print("No periods included. Starting now")        
+    else:
+        p_len = len(pattern)
+        for i in range(0, len(message), p_len):
+            if message[i:i+p_len] != pattern:
+                end_of_periodicity = i
+                break
+    
+        print(f"Periodizität bricht ab bei Index: {end_of_periodicity}")
+        print(f"Fragment am Bruchpunkt: {message[end_of_periodicity:end_of_periodicity+10]}...")
+
+    marker_index = message.find(sequence, end_of_periodicity)
+
+    if marker_index == -1:
+        marker_index = input_str.find(sequence)
+
+    if marker_index != -1:
+        payload = message[marker_index + len(sequence):]
+        print(payload)
+    else:
+        print("No Marker found")
+
+   
+    blocks = split_string(payload,BITCNT)
     
     decode = []
     for block in blocks:
@@ -44,7 +68,7 @@ def doEncode(message, offset=8*8, praeambel="10101011"):
 
 
 if __name__ == "__main__":
-    doEncode(sys.argv[1])
+    do_decode(sys.argv[1])
     
 
     
