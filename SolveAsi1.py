@@ -24,7 +24,7 @@ def do_decode(message, offset=8*8, sequence="10101011"):
     print("Removing the first %d characters" % offset)
 
     #str_prae = message[:offset]
-    message=message[offset:]    
+    #message=message[offset:]    
 
     print("The sequence "+sequence+" appears in the input-string: "+str(message.count(sequence))+" times")
     
@@ -47,7 +47,7 @@ def do_decode(message, offset=8*8, sequence="10101011"):
     marker_index = message.find(sequence, end_of_periodicity)
 
     if marker_index == -1:
-        marker_index = input_str.find(sequence)
+        marker_index = message.find(sequence)
 
     if marker_index != -1:
         payload = message[marker_index + len(sequence):]
@@ -55,7 +55,7 @@ def do_decode(message, offset=8*8, sequence="10101011"):
     else:
         print("No Marker found")
 
-   
+    print("Lenght of Payload: "+str(len(payload)))
     blocks = split_string(payload,BITCNT)
     
     decode = []
@@ -64,7 +64,9 @@ def do_decode(message, offset=8*8, sequence="10101011"):
         print(block+": "+chr(dec))   
         decode.append(chr(dec))
 
-    print(''.join(decode))
+
+    decoded_message=''.join(decode)
+    print(decoded_message)    
 
 
 if __name__ == "__main__":
